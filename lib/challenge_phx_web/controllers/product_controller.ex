@@ -14,7 +14,6 @@ defmodule ChallengePhxWeb.ProductController do
   def index(conn, _params) do
     products = Repo.all(Product)
     render(conn, "index.html", products: products)
-
   end
 
   def show(conn, %{"id" => _id }) do
@@ -110,8 +109,8 @@ defmodule ChallengePhxWeb.ProductController do
 
     try do
       case Repo.get(Product, id) do product
-        when 
-          is_map(product)-> 
+        when
+          is_map(product)->
             assign(conn, :product, product)  
           _ -> 
             conn
