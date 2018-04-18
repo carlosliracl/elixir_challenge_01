@@ -41,7 +41,8 @@ defmodule ChallengePhx.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:mongodb_ecto, github: "michalmuskala/mongodb_ecto"},
-      {:credo, "~> 0.9.0-rc1", only: [:dev, :test], runtime: false}
+      {:credo, "~> 0.9.0-rc1", only: [:dev, :test], runtime: false},
+      {:exredis, ">= 0.2.4"}
     ]
   end
 

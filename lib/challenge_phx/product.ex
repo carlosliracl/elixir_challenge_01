@@ -1,6 +1,8 @@
 defmodule ChallengePhx.Product do
   use Ecto.Schema
   import Ecto.Changeset
+  # @derive {Poison.Encoder, exclude: [:__meta__]}
+  @derive {Poison.Encoder, only: [:id, :sku, :name, :description, :quantity, :price, :created_at, :updated_at]}
 
   @primary_key {:id, :binary_id, autogenerate: true}  # the id maps to uuid
 

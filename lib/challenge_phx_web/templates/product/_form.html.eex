@@ -8,7 +8,7 @@
     </div>
 <% end %>
 
-<%= form_for @changeset, @action, [class: "form-horizontal", role: "form"], fn f -> %>
+<%= form_for @changeset, @action, [class: "form-horizontal", role: "form", method: @method], fn f -> %>
     <div class="form-group">
         <div class="control-label col-md-2">
             <%= label f,  :sku %>

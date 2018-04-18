@@ -62,3 +62,11 @@ config :challenge_phx, ChallengePhx.Repo,
   # username: "mongodb", # remove if unneeded
   # password: "mongosb", # remove if unneeded
   hostname: "localhost"
+
+config :exredis,
+  host: "127.0.0.1",
+  port: 6379,
+  password: "",
+  db: 0,
+  reconnect: :no_reconnect,
+  max_queue: :infinity

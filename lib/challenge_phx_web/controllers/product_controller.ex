@@ -2,9 +2,11 @@ defmodule ChallengePhxWeb.ProductController do
   use ChallengePhxWeb, :controller
 
   import ChallengePhxWeb.Router.Helpers
-  
+
+  alias ChallengePhx.ProductCache
   alias ChallengePhx.Repo
   alias ChallengePhx.Product
+  alias ChallengePhx.Products
 
   require Logger
   require IEx
@@ -12,18 +14,21 @@ defmodule ChallengePhxWeb.ProductController do
   plug :set_product  when action in [:show, :update, :edit, :delete]
 
   def index(conn, _params) do
+    # products = ProductCache.all()
     products = Repo.all(Product)
+
     render(conn, "index.html", products: products)
   end
 
   def show(conn, %{"id" => _id }) do
+    # IEx.pry
     product = conn.assigns[:product]
-
+    Logger.debug("Show Product:  #{inspect(product)}")
     conn
     |> render("show.html", product: product)
   end
 
-  def new(conn, params) do
+  def new(conn, _params) do
     changeset = Product.changeset(%Product{})
     Logger.debug ("Changeset:  #{inspect(changeset)}")
     render(conn, "new.html", changeset: changeset)
@@ -32,14 +37,11 @@ defmodule ChallengePhxWeb.ProductController do
   def create(conn, params) do
     %{"product" => product_params } = params
     # Logger.debug ("Create params:  #{inspect(product_params)}")
-       
     changeset = Product.changeset(%Product{}, product_params)
-
-    Logger.debug ("Create product:  #{inspect(changeset)}")
-    
     case Repo.insert changeset do
       {:ok, product} ->
         Logger.debug ("Create ok:  #{inspect(product)}")
+        ProductCache.store(product)
         conn
         |> put_flash(:info, "#{product.name} created!")
         |> redirect(to: product_path(conn, :index))
@@ -58,24 +60,18 @@ defmodule ChallengePhxWeb.ProductController do
   def update(conn, params) do
     %{"product" => product_params } = params
     product = conn.assigns[:product]
-    
-    Logger.debug ("Create params:  #{inspect(product_params)}")
-       
     changeset = Product.changeset(product, product_params)
-    Logger.debug ("Create product:  #{inspect(changeset)}")
-      
       case Repo.update changeset do
         {:ok, product} ->
-          Logger.debug ("Create ok:  #{inspect(product)}")
-            conn
-            |> put_flash(:info, "#{product.name} updated!")
-            |> redirect(to: product_path(conn, :index))
+          Logger.debug ("Update ok:  #{inspect(product)}")
+          # ProductCache.store(product)
+          conn
+          |> put_flash(:info, "#{product.name} updated!")
+          |> redirect(to: product_path(conn, :index))
         {:error, changeset} ->
-            Logger.debug ("Create error:  #{inspect(changeset)}")
-            render(conn, "new.html", changeset: changeset)
-
+            Logger.debug ("Update error:  #{inspect(changeset)}")
+            render(conn, "edit.html", changeset: changeset)
     end
-      redirect( conn, to:  product_path(conn, :index))
   end
 
   def delete(conn, params) do
@@ -85,8 +81,8 @@ defmodule ChallengePhxWeb.ProductController do
     product_to_remove = conn.assigns[:product]
 
     case Repo.delete(product_to_remove) do
-      {:ok, product} -> 
-        
+      {:ok, product} ->
+        ProductCache.delete(product.id)
         Logger.debug("Destroy ok: #{inspect(product)}")
         conn
         |> put_flash(:info, "Product #{product.name} destroyed")
@@ -94,34 +90,30 @@ defmodule ChallengePhxWeb.ProductController do
 
       {:error, changeset} ->
         Logger.debug("Destroy error: #{inspect(changeset)}")
-        conn 
+        conn
         |> put_flash(:error, "Product destroy failed")
         |> render("show.html", changeset: changeset)
-    end 
+    end
   end
 
-  defp set_product(conn, params) do
+  defp set_product(conn, _attrs) do
     %{"id" => id } = conn.params
 
-    Logger.debug ("params -> #{inspect(params)}")
-    Logger.debug ("conn.params -> #{inspect(conn.params)}")
-    Logger.debug ("inspected id -> #{inspect(id)}")
-
-    try do
-      case Repo.get(Product, id) do product
-        when
-          is_map(product)->
-            assign(conn, :product, product)  
-          _ -> 
-            conn
-            |> put_flash(:error, "Product #{id} not found.")
-            |> redirect(to: product_path(conn, :index))
-      end
-    rescue
-      _ -> 
-        conn
-        |> put_flash(:error, "Product #{id} not found.")
-        |> redirect(to: product_path(conn, :index))
+    case ProductCache.get(id) do cached_product
+      when
+        is_map( cached_product) -> assign(conn, :product, cached_product)
+        :error ->
+          case Products.get(id)  do product
+            when
+              is_map(product) ->
+                ProductCache.store(product)
+                assign(conn, :product, product)
+              _ ->
+                Logger.debug("set_product:Product #{id} not found." )
+                conn
+                |> put_flash(:error, "Product #{id} not found.")
+                |> redirect(to: product_path(conn, :index))
+            end
     end
   end
 end
