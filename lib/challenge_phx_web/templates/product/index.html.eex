@@ -1,0 +1,36 @@
+<%= link "Add product", to: product_path(@conn, :new), class: "btn btn-default btn-lg mb-1" %>
+
+<%= if Enum.empty? @products do %>
+    <h1 id="no-products">No products created</h1>
+<% else %>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <%= for product <- @products do %>
+            <tr>
+                <td>
+                    <%=link product.sku, to: product_path(@conn, :show, product.id) %>
+                </td>
+                <td>
+                    <%= product.name %>
+                </td>
+                <td>
+                    <%= product.description %>
+                </td>
+                <td>
+                    <%= product.quantity %>
+                </td>
+                <td>
+                    <%= product.price %>
+                </td>
+            </tr>
+        <% end %>
+    </table>
+<% end %>

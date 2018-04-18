@@ -1,0 +1,25 @@
+<h2>Show product</h2>
+<table class="table">
+    <tr>
+        <th>Sku</th>
+        <td><%= @product.sku %></td>
+    </tr>
+    <tr>
+        <th>Name</th>
+        <td><%= @product.name %></td>
+    </tr>
+    <tr>
+        <th>Description</th>
+        <td><%= @product.description %></td>
+    </tr>
+    <tr>
+        <th>Quantity</th>
+        <td><%= @product.quantity %></td>
+    </tr>
+    <tr>
+        <th>Price</th>
+        <td><%= @product.price %></td>
+    </tr>
+</table>
+<%= link "Edit product", to: product_path(@conn, :edit, @product.id), class: "btn btn-primary btn-lg" %>
+<%= button "Delete", to: product_path(@conn, :delete, @product.id), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-lg" %>
