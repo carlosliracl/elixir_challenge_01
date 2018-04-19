@@ -20,7 +20,7 @@ defmodule ChallengePhx.Mixfile do
   def application do
     [
       mod: {ChallengePhx.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :logstash, :elistix] 
     ]
   end
 
@@ -42,7 +42,12 @@ defmodule ChallengePhx.Mixfile do
       {:cowboy, "~> 1.0"},
       {:mongodb_ecto, github: "michalmuskala/mongodb_ecto"},
       {:credo, "~> 0.9.0-rc1", only: [:dev, :test], runtime: false},
-      {:exredis, ">= 0.2.4"}
+      {:exredis, ">= 0.2.4"},
+      {:faker, "~> 0.10"},
+      {:tirexs, "~> 0.8"},
+      {:elistix, "~> 1.0.1"},
+      # {:logger_logstash_backend, "~> 3.0.0"}
+      {:logstash, github: "svetob/logstash-json"}
     ]
   end
 

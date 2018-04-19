@@ -70,3 +70,28 @@ config :exredis,
   db: 0,
   reconnect: :no_reconnect,
   max_queue: :infinity
+
+config :tirexs, :uri, "http://elastic:changeme@127.0.0.1:9200"#, :userinfo, "elastic:changeme"
+# config :elistix, :es_uri, "http://elastic:changeme@127.0.0.1:9200"
+
+config :logger,
+  backends: [
+    :console,
+    # {LogstashJson.Console, :json},
+    {LogstashJson.TCP, :logstash}
+  ]
+
+# config :logger,
+#   backends: [
+#     :console,
+#     {LogstashJson.TCP, :logstash}
+#   ]
+
+config :logger, :logstash,
+  level: :info,
+  host: {:system, "LOGSTASH_TCP_HOST", "localhost"},
+  port: {:system, "LOGSTASH_TCP_PORT", "5000"},
+  fields: %{appid: "phoenix-app"},
+  formatter: {ChallengePhx.Logger, :formatter},
+  workers: 2,
+  buffer_size: 10_000

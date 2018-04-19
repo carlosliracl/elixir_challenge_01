@@ -14,9 +14,12 @@ defmodule ChallengePhx.Application do
       supervisor(ChallengePhxWeb.Endpoint, []),
       # Start your own worker by calling: ChallengePhx.Worker.start_link(arg1, arg2, arg3)
       # worker(ChallengePhx.Worker, [arg1, arg2, arg3]),
+      # supervisor(ChallengePhx.SynchronizeCache, [[name: MyApp.TaskSupervisor, restart: :transient]])
+      # Plug.Adapters.Cowboy.child_spec(:http, , [])
     ]
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
+
     opts = [strategy: :one_for_one, name: ChallengePhx.Supervisor]
     Supervisor.start_link(children, opts)
 

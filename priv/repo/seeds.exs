@@ -9,3 +9,15 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+for _ <- 1..100 do
+  ChallengePhx.Repo.insert!(%ChallengePhx.Product{
+    sku: Faker.String.base64,
+    name: Faker.Commerce.product_name,
+    description: Faker.Commerce.department,
+    quantity: :rand.uniform(99),
+    price: Faker.Commerce.price,
+  })
+
+  ## feed elasticsearch
+  Repo.all(Product) |> Enum.each(fn(product) -> ProductCache.store product  end)
+end

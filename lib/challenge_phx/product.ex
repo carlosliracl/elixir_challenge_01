@@ -23,4 +23,13 @@ defmodule ChallengePhx.Product do
     |> validate_required([:sku, :name, :description, :quantity, :price])
     |> unique_constraint(:sku, name: "sku_1")
   end
+
+
+  def to_list(product) do
+    fields = [:id, :sku, :name, :description, :quantity, :price] #, :created_at, :updated_at
+
+    product 
+    |> Map.to_list
+    |> Enum.filter(fn(x) -> Enum.member?(fields, elem(x,0)) end)
+  end
 end
