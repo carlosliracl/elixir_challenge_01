@@ -6,8 +6,7 @@
 use Mix.Config
 
 # General application configuration
-config :challenge_phx,
-  ecto_repos: [ChallengePhx.Repo]
+config :challenge_phx, ecto_repos: [ChallengePhx.Repo]
 
 # Configures the endpoint
 config :challenge_phx, ChallengePhxWeb.Endpoint,
@@ -21,6 +20,26 @@ config :challenge_phx, ChallengePhxWeb.Endpoint,
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
+
+# elasticsearch
+config :tirexs, :uri, "http://elastic:changeme@127.0.0.1:9200"#, :userinfo, "elastic:changeme"
+
+#logstash
+config :logger,
+  backends: [
+    :console,
+    {LogstashJson.TCP, :logstash}
+  ]
+#logstash
+config :logger, :logstash,
+  level: :info,
+  # host: {:system, "LOGSTASH_TCP_HOST", "localhost"},
+  host: {:system, "LOGSTASH_TCP_HOST", "localhost"},
+  port: {:system, "LOGSTASH_TCP_PORT", "5000"},
+  fields: %{appid: "phoenix-app"},
+  formatter: {ChallengePhx.LoggerFormatter, :formatter},
+  workers: 2,
+  buffer_size: 10_000
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

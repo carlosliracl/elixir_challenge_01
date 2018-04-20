@@ -1,6 +1,5 @@
 defmodule ChallengePhx.RequestLogger do
   import Plug.Conn
-  import IEx
   require Logger
 
   def init(opts) do
@@ -8,8 +7,12 @@ defmodule ChallengePhx.RequestLogger do
   end
 
   def call(conn, level) do
+
+    begin_time = :os.system_time(:millisecond)
+
     Plug.Conn.register_before_send(conn, fn(conn) ->
       # IEx.pry
+      end_time = :os.system_time(:millisecond)
 
       status = conn.status
       Logger.metadata([
@@ -18,6 +21,7 @@ defmodule ChallengePhx.RequestLogger do
         method: conn.method,
         query_string: conn.query_string,
         params: conn.params,
+        duration: (end_time - begin_time)
       ])
       Logger.log(level, fn ->
         metadata = Logger.metadata

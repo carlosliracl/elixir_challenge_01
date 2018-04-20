@@ -3,7 +3,7 @@ defmodule ChallengePhx.ElasticCache do
   import Tirexs.Search
 
   def store(model) do
-    {:ok, encoded} = Poison.encode(model)
+    # {:ok, encoded} = Poison.encode(model)
     result = put("/challenge/#{model_field(model)}/#{model.id}", model.__struct__.to_list model)
   end
 

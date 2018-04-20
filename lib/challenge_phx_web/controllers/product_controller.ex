@@ -66,7 +66,7 @@ defmodule ChallengePhxWeb.ProductController do
     end
   end
 
-  def delete(conn, params) do
+  def delete(conn, _params) do
     product_to_remove = conn.assigns[:product]
 
     case Repo.delete(product_to_remove) do
@@ -104,7 +104,7 @@ defmodule ChallengePhxWeb.ProductController do
   end
 
 
-  defp search_products(search_param \\ "") do
+  defp search_products(search_param) do
     case search_param != nil and search_param |> String.trim |> String.length  do
       0 -> Repo.all(Product)
       false -> Repo.all(Product)

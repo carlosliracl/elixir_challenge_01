@@ -4,7 +4,7 @@ use Mix.Config
 # you can enable the server option below.
 config :challenge_phx, ChallengePhxWeb.Endpoint,
   http: [port: 4001],
-  server: false
+  server: true
 
 # Print only warnings and errors during test
 config :logger, level: :warn
@@ -20,6 +20,9 @@ config :logger, level: :warn
 
 
 config :challenge_phx, ChallengePhx.Repo,
+  # pool: Mongo.Pool.Poolboy,
+  # pool: Ecto.Adapters.SQL.Sandbox,
+  adapter: Mongo.Ecto,
   database: "challenge_test",
   # username: "mongodb", # remove if unneeded
   # password: "mongosb", # remove if unneeded

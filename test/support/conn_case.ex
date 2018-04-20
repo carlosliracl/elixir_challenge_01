@@ -14,6 +14,7 @@ defmodule ChallengePhxWeb.ConnCase do
   """
 
   use ExUnit.CaseTemplate
+  require IEx
 
   using do
     quote do
@@ -28,6 +29,7 @@ defmodule ChallengePhxWeb.ConnCase do
 
 
   setup tags do
+    IEx.pry
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(ChallengePhx.Repo)
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(ChallengePhx.Repo, {:shared, self()})

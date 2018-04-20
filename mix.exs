@@ -20,10 +20,18 @@ defmodule ChallengePhx.Mixfile do
   def application do
     [
       mod: {ChallengePhx.Application, []},
-      extra_applications: [:logger, :runtime_tools, :logstash, :elistix] 
+      # extra_applications: [:logger, :runtime_tools, :mongodb_ecto, :logstash_json] 
+      extra_applications: app_list(Mix.env) 
     ]
   end
 
+  def app_list do
+    [:logger, :runtime_tools, :mongodb_ecto, :logstash_json]
+  end
+  
+  def app_list(:test), do: [:hound | app_list]
+  def app_list(_),     do: app_list
+  
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_),     do: ["lib"]
@@ -45,9 +53,10 @@ defmodule ChallengePhx.Mixfile do
       {:exredis, ">= 0.2.4"},
       {:faker, "~> 0.10"},
       {:tirexs, "~> 0.8"},
-      {:elistix, "~> 1.0.1"},
+      # {:elistix, "~> 1.0.1"},
       # {:logger_logstash_backend, "~> 3.0.0"}
-      {:logstash, github: "svetob/logstash-json"}
+      {:hound, "~> 1.0"},
+      {:logstash_json, github: "svetob/logstash-json"}
     ]
   end
 
@@ -61,7 +70,7 @@ defmodule ChallengePhx.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test": ["ecto.create --quiet", "ecto.migrate", "test"]
+      "test":       ["ecto.drop", "ecto.create", "ecto.migrate", "test"]
     ]
   end
 end
