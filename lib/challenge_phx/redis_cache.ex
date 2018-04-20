@@ -1,10 +1,47 @@
 defmodule ChallengePhx.RedisCache do
-  alias ChallengePhx.Products
-  require Logger
-  
-  def boot() do
-    Logger.info("Boot App Cache")
-    Products.boot_cache
+  import Exredis
+  import Exredis.Api
+  require IEx
+
+  def get(struct, id) do
+    {:ok, client} = Exredis.start_link
+    result = hget(client, struct_field(struct) , id)
+    client |> stop
+
+    case result do
+        :undefined -> :undefined
+        _ -> Poison.decode! result, as: struct.__struct__
+    end
   end
 
+  def store(model) do
+    {:ok, encoded} = Poison.encode(model)
+    {:ok, client} = Exredis.start_link
+    client |> hset(model_field(model), model.id, encoded)
+    client |> stop
+  end
+
+  def delete(struct, id) do
+    {:ok, client} = Exredis.start_link
+    client |> hdel(struct_field(struct), id)
+    client |> stop
+  end
+
+  def all(struct) do
+    {:ok, client} = Exredis.start_link
+    result = hgetall(client, struct_field(struct))
+    client |> stop
+
+    result
+    |> Map.values
+    |> Enum.map(&(Poison.decode!(&1, as: struct.__struct__) ))    
+    # |> Enum.map(fn(x) -> Poison.decode!(x, as:model)  end)
+  end
+
+  defp model_field model do
+    elem(model.__meta__.source, 1)
+  end
+  defp struct_field struct do
+    elem(struct.__struct__.__meta__.source, 1)
+  end
 end

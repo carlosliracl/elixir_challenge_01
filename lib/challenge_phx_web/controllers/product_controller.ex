@@ -62,7 +62,7 @@ defmodule ChallengePhxWeb.ProductController do
           |> put_flash(:info, "#{product.name} updated!")
           |> redirect(to: product_path(conn, :index))
         {:error, changeset} ->
-            render(conn, "edit.html", changeset: changeset)
+          render(conn, "edit.html", changeset: changeset)
     end
   end
 
@@ -89,7 +89,7 @@ defmodule ChallengePhxWeb.ProductController do
     case ProductCache.get(id) do cached_product
       when
         is_map( cached_product) -> assign(conn, :product, cached_product)
-        :error ->
+        :undefined ->
           case Products.get(id)  do product
             when
               is_map(product) ->

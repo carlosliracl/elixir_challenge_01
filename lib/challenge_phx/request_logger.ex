@@ -9,7 +9,6 @@ defmodule ChallengePhx.RequestLogger do
 
   def call(conn, level) do
     Plug.Conn.register_before_send(conn, fn(conn) ->
-
       # IEx.pry
 
       status = conn.status
@@ -23,7 +22,7 @@ defmodule ChallengePhx.RequestLogger do
       Logger.log(level, fn ->
         metadata = Logger.metadata
         duration = Keyword.get(metadata, :duration, -1)
-        "#{conn.method} #{conn.request_path} :: #{status} in #{duration}ms EQEQWRQWER"
+        "#{conn.method} #{conn.request_path} :: #{status} in #{duration}ms"
       end)
 
       conn

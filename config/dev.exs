@@ -92,6 +92,6 @@ config :logger, :logstash,
   host: {:system, "LOGSTASH_TCP_HOST", "localhost"},
   port: {:system, "LOGSTASH_TCP_PORT", "5000"},
   fields: %{appid: "phoenix-app"},
-  formatter: {ChallengePhx.Logger, :formatter},
+  formatter: {ChallengePhx.LoggerFormatter, :formatter},
   workers: 2,
   buffer_size: 10_000

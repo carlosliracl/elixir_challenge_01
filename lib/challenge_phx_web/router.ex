@@ -1,6 +1,5 @@
 defmodule ChallengePhxWeb.Router do
   use ChallengePhxWeb, :router
-  import ChallengePhx.Logger
 
   pipeline :browser do
     plug :accepts, ["html"]

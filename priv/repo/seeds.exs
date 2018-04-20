@@ -17,7 +17,10 @@ for _ <- 1..100 do
     quantity: :rand.uniform(99),
     price: Faker.Commerce.price,
   })
-
-  ## feed elasticsearch
-  Repo.all(Product) |> Enum.each(fn(product) -> ProductCache.store product  end)
 end
+
+## feed elasticsearch
+# alias ChallengePhx.Repo
+# alias ChallengePhx.Product
+# alias ChallengePhx.ProductCache
+Repo.all(Product) |> Enum.each(fn(product) -> ProductCache.store product  end)
