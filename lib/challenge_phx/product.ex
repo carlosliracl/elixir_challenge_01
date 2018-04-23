@@ -2,7 +2,7 @@ defmodule ChallengePhx.Product do
   use Ecto.Schema
   import Ecto.Changeset
   # @derive {Poison.Encoder, exclude: [:__meta__]}
-  @derive {Poison.Encoder, only: [:id, :sku, :name, :description, :quantity, :price, :created_at, :updated_at]}
+  @derive {Poison.Encoder, only: [:id, :sku, :name, :description, :quantity, :price, :ean, :created_at, :updated_at]}
 
   @primary_key {:id, :binary_id, autogenerate: true}  # the id maps to uuid
 
@@ -34,10 +34,10 @@ defmodule ChallengePhx.Product do
 
 
   def to_list(product) do
-    fields = [:id, :sku, :name, :description, :quantity, :price, :ean] 
-
-    product 
+    fields = [:id, :sku, :name, :description, :quantity, :price, :ean]
+    
+    product
     |> Map.to_list
-    |> Enum.filter(fn(x) -> Enum.member?(fields, elem(x,0)) end)
+    |> Enum.filter(&(Enum.member?(fields, elem(&1, 0))))
   end
 end

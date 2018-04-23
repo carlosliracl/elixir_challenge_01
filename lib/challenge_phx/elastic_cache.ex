@@ -1,6 +1,7 @@
 defmodule ChallengePhx.ElasticCache do
   import Tirexs.HTTP
   import Tirexs.Search
+  require IEx
 
   def store(model) do
     # {:ok, encoded} = Poison.encode(model)
@@ -22,9 +23,14 @@ defmodule ChallengePhx.ElasticCache do
     # IO.inspect(query)
     result = Tirexs.Query.create_resource(query)
     # IO.inspect(result)
-    hits = elem(result, 2).hits.hits
-    hits
-    |> Enum.map(fn(el) -> el._source  end)
+    if elem(result, 0) == :error do
+      []
+    else
+      hits = elem(result, 2).hits.hits
+      hits
+      |> Enum.map(fn(el) -> el._source  end)
+    end
+    
   end
 
   defp model_field model do

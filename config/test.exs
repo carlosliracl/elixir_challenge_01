@@ -35,3 +35,5 @@ config :exredis,
   db: 0,
   reconnect: :no_reconnect,
   max_queue: :infinity
+
+config :hound, driver: "phantomjs"

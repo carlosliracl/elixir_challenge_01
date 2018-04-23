@@ -14,6 +14,9 @@ defmodule ChallengePhxWeb.ConnCase do
   """
 
   use ExUnit.CaseTemplate
+  alias ChallengePhx.Repo
+  alias ChallengePhx.Product
+  Exredis.Api
   require IEx
 
   using do
@@ -21,6 +24,7 @@ defmodule ChallengePhxWeb.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
       import ChallengePhxWeb.Router.Helpers
+    
 
       # The default endpoint for testing
       @endpoint ChallengePhxWeb.Endpoint
@@ -29,12 +33,26 @@ defmodule ChallengePhxWeb.ConnCase do
 
 
   setup tags do
-    IEx.pry
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ChallengePhx.Repo)
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(ChallengePhx.Repo, {:shared, self()})
-    end
+    # IEx.pry
+    # :ok = Ecto.Adapters.SQL.Sandbox.checkout(ChallengePhx.Repo)
+    # unless tags[:async] do
+    #   Ecto.Adapters.SQL.Sandbox.mode(ChallengePhx.Repo, {:shared, self()})
+    # end
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
+
+  setup_all do
+    IO.puts "Drop Redis database content"
+
+    Exredis.Api.keys("*")
+    |> Enum.each(&(Exredis.Api.del(&1)))
+
+    IO.puts "Drop Product collection content"
+
+    Repo.delete_all(Product)
+    {:ok, dummy: :dumb}
+  end
+
+  
 
 end

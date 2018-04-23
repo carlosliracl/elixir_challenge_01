@@ -128,10 +128,9 @@ defmodule ProductTest do
     assert product.valid? == false
 
     assert product.errors[:ean] |> elem(0) == "should be at least %{count} character(s)"
-    
+
     validation = product.errors[:ean] |> elem(1)
     assert validation[:min] == 8
-
 
     assert {:error, _} = Repo.insert(product)
 
@@ -151,7 +150,5 @@ defmodule ProductTest do
     assert validation[:max] == 13
 
     assert {:error, _} = Repo.insert(product)
-
   end
-
 end

@@ -13,17 +13,21 @@ defmodule ChallengePhxWeb.ProductController do
 
   plug :set_product  when action in [:show, :update, :edit, :delete]
 
+
   def index(conn, params) do
-    search_param = Map.get(params, "q")
-    products = search_products search_param
+    search_param = params |> Map.get("q", nil)
+    products = search_products conn, search_param
     render(conn, "index.html", products: products, search_param: search_param)
   end
 
   def show(conn, %{"id" => _id }) do
-    # IEx.pry
     product = conn.assigns[:product]
-    conn
-    |> render("show.html", product: product)
+    if product != nil do
+      conn
+      |> render("show.html", product: product)
+    else
+      conn
+    end
   end
 
   def new(conn, _params) do
@@ -31,47 +35,49 @@ defmodule ChallengePhxWeb.ProductController do
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn, params) do
-    %{"product" => product_params } = params
-    changeset = Product.changeset(%Product{}, product_params)
-    case Repo.insert changeset do
+  def create(conn,  %{"product" => product_params }) do
+
+    case Products.insert product_params do
       {:ok, product} ->
-        ProductCache.store(product)
         conn
         |> put_flash(:info, "#{product.name} created!")
         |> redirect(to: product_path(conn, :index))
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
+    
   end
 
   def edit(conn, %{"id" => _id }) do
     product = conn.assigns[:product]
-    changeset = Product.changeset(product)
-    render(conn, "edit.html", changeset: changeset)
+    if product != nil do
+      changeset = Product.changeset(product)
+      render(conn, "edit.html", changeset: changeset)
+    else
+      conn
+    end
   end
 
-  def update(conn, params) do
-    %{"product" => product_params } = params
+  def update(conn, %{"product" => product_params }) do
+    
     product = conn.assigns[:product]
-    changeset = Product.changeset(product, product_params)
-      case Repo.update changeset do
-        {:ok, product} ->
-          ProductCache.store(product)
-          conn
-          |> put_flash(:info, "#{product.name} updated!")
-          |> redirect(to: product_path(conn, :index))
-        {:error, changeset} ->
-          render(conn, "edit.html", changeset: changeset)
+
+    case Products.update product, product_params do
+      {:ok, product} ->
+        conn
+        |> put_flash(:info, "#{product.name} updated!")
+        |> redirect(to: product_path(conn, :index))
+      {:error, changeset} ->
+        render(conn, "edit.html", changeset: changeset)
     end
+
   end
 
   def delete(conn, _params) do
     product_to_remove = conn.assigns[:product]
 
-    case Repo.delete(product_to_remove) do
+    case Products.delete(product_to_remove) do
       {:ok, product} ->
-        ProductCache.delete(product.id)
         conn
         |> put_flash(:info, "Product #{product.name} destroyed")
         |> redirect(to: product_path(conn, :index))
@@ -86,26 +92,21 @@ defmodule ChallengePhxWeb.ProductController do
   defp set_product(conn, _attrs) do
     %{"id" => id } = conn.params
 
-    case ProductCache.get(id) do cached_product
+    case Products.get(id) do product
       when
-        is_map( cached_product) -> assign(conn, :product, cached_product)
+        is_map( product) ->
+          assign(conn, :product, product)
+
         :undefined ->
-          case Products.get(id)  do product
-            when
-              is_map(product) ->
-                ProductCache.store(product)
-                assign(conn, :product, product)
-              _ ->
-                conn
-                |> put_flash(:error, "Product #{id} not found.")
-                |> redirect(to: product_path(conn, :index))
-            end
+          conn
+          |> put_flash(:error, "Product #{id} not found.")
+          |> redirect(to: product_path(conn, :index))
     end
   end
 
 
-  defp search_products(search_param) do
-    case search_param != nil and search_param |> String.trim |> String.length  do
+  defp search_products(conn, search_param) do
+    case search_param != nil do
       0 -> Repo.all(Product)
       false -> Repo.all(Product)
       _ -> ProductCache.search(search_param)

@@ -8,7 +8,7 @@
     <h4>Resources</h4>
     <ul>
       <li>
-        <%= link "Produtos", to: product_path(@conn, :index)%>
+        <%= link "Produtos", to: product_path(@conn, :index), id: "list_products"%>
       </li>
     </ul>
   </div>
