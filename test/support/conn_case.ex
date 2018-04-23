@@ -22,6 +22,7 @@ defmodule ChallengePhxWeb.ConnCase do
   using do
     quote do
       # Import conveniences for testing with connections
+      use Wallaby.DSL
       use Phoenix.ConnTest
       import ChallengePhxWeb.Router.Helpers
     
@@ -38,7 +39,13 @@ defmodule ChallengePhxWeb.ConnCase do
     # unless tags[:async] do
     #   Ecto.Adapters.SQL.Sandbox.mode(ChallengePhx.Repo, {:shared, self()})
     # end
-    {:ok, conn: Phoenix.ConnTest.build_conn()}
+    {:ok, session} = Wallaby.start_session()
+    conn = Phoenix.ConnTest.build_conn()
+    {
+      :ok, 
+      conn: conn,
+      session: session
+    }
   end
 
   setup_all do

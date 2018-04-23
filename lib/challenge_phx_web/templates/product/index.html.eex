@@ -6,7 +6,7 @@
             <input id="product_search_input" name="q" class="form-control" value="<%= @search_param %>" placeholder="Search term"/>
         </div>
         <div class="col-md-2">
-            <button id="product_search_button" type="submit" class="btn btn-default ">Pesquisar</button>
+            <button id="product_search_button" type="submit" class="btn btn-default ">Search</button>
         </div>
     </div>
 </form>
@@ -28,7 +28,7 @@
   <%= for product <- @products do %>
     <tr>
         <td>
-            <%=link product.sku, to: product_path(@conn, :show, product.id) %>
+            <%=link product.sku, to: product_path(@conn, :show, product.id), class: "product_#{product.id}"  %>
         </td>
         <td>
             <%= product.name %>

@@ -11,7 +11,7 @@ defmodule ChallengePhxWeb.ProductCreateTest do
   hound_session()
 
   @valid_product_params %{
-    sku: "ADFAASDFA-SDFA1231231",
+    sku: "SKU-2324ASFA",
     name: "Product Name",
     description: "Product Name with a looooooong string ........ ",
     quantity: 300,

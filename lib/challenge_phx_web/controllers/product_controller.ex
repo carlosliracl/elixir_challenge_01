@@ -16,7 +16,7 @@ defmodule ChallengePhxWeb.ProductController do
 
   def index(conn, params) do
     search_param = params |> Map.get("q", nil)
-    products = search_products conn, search_param
+    products = search_products search_param
     render(conn, "index.html", products: products, search_param: search_param)
   end
 
@@ -59,7 +59,6 @@ defmodule ChallengePhxWeb.ProductController do
   end
 
   def update(conn, %{"product" => product_params }) do
-    
     product = conn.assigns[:product]
 
     case Products.update product, product_params do
@@ -105,10 +104,10 @@ defmodule ChallengePhxWeb.ProductController do
   end
 
 
-  defp search_products(conn, search_param) do
-    case search_param != nil do
-      0 -> Repo.all(Product)
-      false -> Repo.all(Product)
+  defp search_products(search_param) do
+    case search_param == nil do
+      # 0 -> Repo.all(Product)
+      true -> Repo.all(Product)
       _ -> ProductCache.search(search_param)
     end
   end

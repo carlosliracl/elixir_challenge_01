@@ -10,8 +10,7 @@ defmodule ChallengePhx.RequestLogger do
 
     begin_time = :os.system_time(:millisecond)
 
-    Plug.Conn.register_before_send(conn, fn(conn) ->
-      # IEx.pry
+    register_before_send(conn, fn(conn) ->
       end_time = :os.system_time(:millisecond)
 
       status = conn.status

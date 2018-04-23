@@ -1,16 +1,16 @@
 defmodule ChallengePhxWeb.ProductEditTest do
   use ChallengePhxWeb.ConnCase
-  # Import Hound helpers
-  use Hound.Helpers
+
   import ChallengePhxWeb.Router.Helpers
-  alias ChallengePhx.Repo
+  import Wallaby.Query#, only: [css: 1, text_field: 1, button: 1]
+  import Wallaby.Browser#, only: [click: 2, fill_in: 3, has_text?: 2, visit: 2, current_path: 1, assert_text: 2, find: 3, find: 2]
+
   alias ChallengePhx.Product
+  alias ChallengePhx.Products
 
   require IEx
-  # Start a Hound session
-  hound_session()
 
-  @valid_product_params  %Product{
+  @valid_product_params  %{
     sku: "SKUUU-AASSDFFGG",
     name: "Product Name",
     description: "Product Name with a looooooong string ........ ",
@@ -19,7 +19,7 @@ defmodule ChallengePhxWeb.ProductEditTest do
     ean: "ADFAASDFA",
   }
 
-  @valid_product_params_update  %Product{
+  @valid_product_params_update  %{
     sku: "SKUUU-BBBBB",
     name: "New product name",
     description: "New product description",
@@ -30,7 +30,7 @@ defmodule ChallengePhxWeb.ProductEditTest do
 
   setup tags do
     if tags[:insert_one_product] do
-      {:ok, product} = Repo.insert  @valid_product_params
+      {:ok, product} = Products.insert  @valid_product_params
       {:ok, product: product}
     else
       {:ok, dummy: :dumb}
@@ -38,30 +38,30 @@ defmodule ChallengePhxWeb.ProductEditTest do
   end
 
   @tag :insert_one_product
-  test "edit an existing product", %{conn: conn, product: product} do
+  test "edit an existing product", %{conn: conn, product: product, session: session} do
+    session
+    |> visit(product_path(conn, :edit, product.id))
+    |> find(css(".product-form"), fn(form) ->
+      form
+      |> fill_in(text_field("Sku"), with:  @valid_product_params_update.sku)
+      |> fill_in(text_field("Name"), with:  @valid_product_params_update.name)
+      |> fill_in(text_field("Description"), with: @valid_product_params_update.description)
+      |> fill_in(text_field("Quantity"), with: @valid_product_params_update.quantity)
+      |> fill_in(text_field("Price"), with: @valid_product_params_update.price)
+      |> fill_in(text_field("Ean"), with: @valid_product_params_update.ean)
+      |> click(button("Submit"))
+    end)
+    |> find(css(".table"), fn(table) ->
+      table |> assert_has(link(@valid_product_params_update.sku))
+      table |> assert_text(@valid_product_params_update.name)
+      table |> assert_text(@valid_product_params_update.description)
+      table |> assert_text("#{@valid_product_params_update.quantity}")
+      table |> assert_text("#{@valid_product_params_update.price}")
+      table |> assert_text(@valid_product_params_update.ean)
+    end)
 
-    conn = get conn, "/"
-    navigate_to product_path(conn, :edit, product.id)
-
-    fill_field find_element(:id, "product_sku"), @valid_product_params_update.sku
-    fill_field find_element(:id, "product_name"), @valid_product_params_update.name
-    fill_field find_element(:id, "product_description"), @valid_product_params_update.description
-    fill_field find_element(:id, "product_quantity"), @valid_product_params_update.quantity
-    fill_field find_element(:id, "product_price"), @valid_product_params_update.price
-    fill_field find_element(:id, "product_ean"), @valid_product_params_update.ean
-
-    click find_element(:id, "product_submit")
-    
-    table_element = find_element(:class, "table")
-    find_within_element(table_element, :link_text, @valid_product_params_update.sku)
-
-    assert current_path() == product_path(conn, :index)
-    assert page_source() =~ "Product List"
-    assert page_source() =~  "#{@valid_product_params_update.name} updated!"
-    assert page_source() =~  @valid_product_params_update.name
-    assert page_source() =~  @valid_product_params_update.description
-    # assert page_source() =~  @valid_product_params.price # arrumar regex
-    # assert page_source() =~  @valid_product_params.quantity
-    assert page_source() =~  @valid_product_params_update.ean
+    session |> assert_text("#{@valid_product_params_update.name} updated!")
+    session |> assert_text("Product List")
+    assert current_path(session) == product_path conn, :index
   end
 end

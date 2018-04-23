@@ -26,4 +26,4 @@
     </tr>
 </table>
 <%= link "Edit product", to: product_path(@conn, :edit, @product.id), class: "btn btn-primary btn-lg" %>
-<%= button "Delete", to: product_path(@conn, :delete, @product.id), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-lg" %>
+<%= button "Delete", to: product_path(@conn, :delete, @product.id), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-lg", id: "product_delete_button" %>

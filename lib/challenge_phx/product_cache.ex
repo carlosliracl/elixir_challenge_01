@@ -1,7 +1,4 @@
 defmodule ChallengePhx.ProductCache do
-  import Exredis
-  import Exredis.Api
-
   require IEx
 
   alias ChallengePhx.Product
@@ -15,16 +12,12 @@ defmodule ChallengePhx.ProductCache do
   end
 
   def store(product) do
-    ElasticCache.store product
     RedisCache.store product
+    ElasticCache.store product
   end
 
   def get(product_id) do
     RedisCache.get Product, product_id
-  end
-
-  def all do
-    RedisCache.all Product
   end
 
   def search(param \\ "") do

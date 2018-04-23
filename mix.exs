@@ -54,7 +54,9 @@ defmodule ChallengePhx.Mixfile do
       {:faker, "~> 0.10"},
       {:tirexs, "~> 0.8"},
       {:hound, "~> 1.0"},
-      {:logstash_json, github: "svetob/logstash-json"}
+      {:logstash_json, github: "svetob/logstash-json"},
+      {:ex_guard, "~> 1.3", only: :dev},
+      {:wallaby, "~> 0.19.2", [runtime: false, only: :test]}
     ]
   end
 
@@ -68,7 +70,12 @@ defmodule ChallengePhx.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test":       ["ecto.drop", "ecto.create", "ecto.migrate", "test"]
+      "test":       [ "assets.compile --quiet", "ecto.drop", "ecto.create", "ecto.migrate", "test"],
+      "assets.compile": &compile_assets/1
     ]
+  end
+
+  defp compile_assets(_) do
+    Mix.shell.cmd("assets/node_modules/brunch/bin/brunch build assets/")
   end
 end
