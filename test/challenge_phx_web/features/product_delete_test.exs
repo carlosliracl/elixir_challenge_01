@@ -1,14 +1,14 @@
 defmodule ChallengePhxWeb.ProductShowTest do
   use ChallengePhxWeb.ConnCase
-  # Import Hound helpers
-  use Hound.Helpers
+
+  import Wallaby.Query
+  import Wallaby.Browser
+
   import ChallengePhxWeb.Router.Helpers
   alias ChallengePhx.Repo
   alias ChallengePhx.Product
 
   require IEx
-  # Start a Hound session
-  hound_session()
 
   @valid_product_params  %Product{
     sku: "SKUUU-AASSDFFGG",
@@ -29,17 +29,13 @@ defmodule ChallengePhxWeb.ProductShowTest do
   end
 
   @tag :insert_one_product
-  test "to delete a existing product", %{conn: conn, product: product} do
-    conn = get conn, "/"
-    navigate_to product_path(conn, :show, product.id)
-
-    find_element(:id, "product_delete_button") |> click
-    accept_dialog()
-
-    assert current_path() == product_path(conn, :index)
-    assert page_source() =~ "Product List"
-    assert page_source() =~  @valid_product_params.name == false
-    assert page_source() =~  @valid_product_params.description  == false
-    assert page_source() =~  @valid_product_params.ean == false
+  test "to delete a existing product", %{conn: conn, product: product, session: session} do
+    session
+    |> visit(product_path(conn, :show, product.id))
+    |> click(css("#product_delete_button"))
+    |> accept_dialogs
+    
+    session |> assert_text("No records found")
+    assert current_path(session) == product_path(conn, :index)
   end
 end

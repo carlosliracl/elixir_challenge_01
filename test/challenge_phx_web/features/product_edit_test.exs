@@ -2,8 +2,8 @@ defmodule ChallengePhxWeb.ProductEditTest do
   use ChallengePhxWeb.ConnCase
 
   import ChallengePhxWeb.Router.Helpers
-  import Wallaby.Query#, only: [css: 1, text_field: 1, button: 1]
-  import Wallaby.Browser#, only: [click: 2, fill_in: 3, has_text?: 2, visit: 2, current_path: 1, assert_text: 2, find: 3, find: 2]
+  import Wallaby.Query
+  import Wallaby.Browser
 
   alias ChallengePhx.Product
   alias ChallengePhx.Products
