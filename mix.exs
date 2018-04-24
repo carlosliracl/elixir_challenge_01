@@ -56,7 +56,8 @@ defmodule ChallengePhx.Mixfile do
       {:tirexs, "~> 0.8"},
       {:logstash_json, github: "svetob/logstash-json"},
       {:ex_guard, "~> 1.3", only: :dev},
-      {:wallaby, "~> 0.20.0", [runtime: false, only: :test]}
+      {:wallaby, "~> 0.20.0", [runtime: false, only: :test]},
+      {:ex_machina, "~> 2.2", only: :test},
     ]
   end
 

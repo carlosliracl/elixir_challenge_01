@@ -49,16 +49,16 @@ defmodule ChallengePhxWeb.ConnCase do
     }
   end
 
-  setup_all do
-    IO.puts "Drop redis content"
-    Exredis.Api.keys("*")
-    |> Enum.each(&(Exredis.Api.del(&1)))
+  # setup_all do
+  #   IO.puts "Drop redis content"
+  #   Exredis.Api.keys("*")
+  #   |> Enum.each(&(Exredis.Api.del(&1)))
 
-    IO.puts "Drop Product collection content"
-    Repo.delete_all(Product)
+  #   IO.puts "Drop Product collection content"
+  #   Repo.delete_all(Product)
 
-    IO.puts "Drop elastic content"
-    ElasticCache.drop
-    {:ok, dummy: :dumb}
-  end
+  #   IO.puts "Drop elastic content"
+  #   ElasticCache.drop
+  #   {:ok, dummy: :dumb}
+  # end
 end

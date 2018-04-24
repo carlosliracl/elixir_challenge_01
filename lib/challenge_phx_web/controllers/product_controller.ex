@@ -13,7 +13,6 @@ defmodule ChallengePhxWeb.ProductController do
 
   plug :set_product  when action in [:show, :update, :edit, :delete]
 
-
   def index(conn, params) do
     search_param = params |> Map.get("q", nil)
     products = search_products search_param
@@ -45,7 +44,6 @@ defmodule ChallengePhxWeb.ProductController do
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
-    
   end
 
   def edit(conn, %{"id" => _id }) do
