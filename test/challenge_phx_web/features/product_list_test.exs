@@ -28,7 +28,10 @@ defmodule ChallengePhxWeb.ProductListTest do
 
   setup tags do
     if tags[:drop_products] do
-      Repo.delete_all Product
+      Exredis.Api.keys("*")
+      |> Enum.each(&(Exredis.Api.del(&1)))
+      Repo.delete_all(Product)
+      ChallengePhx.ElasticCache.drop
     end
     if tags[:create_products] do
       Products.insert  @valid_product_params
@@ -47,63 +50,60 @@ defmodule ChallengePhxWeb.ProductListTest do
 
   @tag :drop_products
   @tag :create_products
-  describe "List products" do
+  test "show a list of products", %{conn: conn, session: session} do
+    session
+    |> visit("/")
+    |> click(css("#list_products"))
+    |> find(css(".table"), fn(table) ->
+      table |> assert_has(link(@valid_product_params.sku))
+      table |> assert_text(@valid_product_params.name)
+      table |> assert_text(@valid_product_params.description)
+      table |> assert_text("#{@valid_product_params.quantity}")
+      table |> assert_text("#{@valid_product_params.price}")
+      table |> assert_text(@valid_product_params.ean)
 
-    test "show a list of products", %{conn: conn, session: session} do
-      session
-      |> visit("/")
-      |> click(css("#list_products"))
-      |> find(css(".table"), fn(table) ->
-        table |> assert_has(link(@valid_product_params.sku))
-        table |> assert_text(@valid_product_params.name)
-        table |> assert_text(@valid_product_params.description)
-        table |> assert_text("#{@valid_product_params.quantity}")
-        table |> assert_text("#{@valid_product_params.price}")
-        table |> assert_text(@valid_product_params.ean)
+      table |> assert_has(link(@valid_product_params2.sku))
+      table |> assert_text(@valid_product_params2.name)
+      table |> assert_text(@valid_product_params2.description)
+      table |> assert_text("#{@valid_product_params2.quantity}")
+      table |> assert_text("#{@valid_product_params2.price}")
+      table |> assert_text(@valid_product_params2.ean)
+    end)
+    assert page_source(session) =~ "No records found" == false
+  end
 
-        table |> assert_has(link(@valid_product_params2.sku))
-        table |> assert_text(@valid_product_params2.name)
-        table |> assert_text(@valid_product_params2.description)
-        table |> assert_text("#{@valid_product_params2.quantity}")
-        table |> assert_text("#{@valid_product_params2.price}")
-        table |> assert_text(@valid_product_params2.ean)
-      end)
-      assert page_source(session) =~ "No records found" == false
-    end
+  @tag :drop_products
+  test "search a non existing product", %{conn: conn, session: session} do
+    session
+    |> visit("/")
+    |> click(css("#list_products"))
+    |> fill_in(text_field("Search term"), with: "Non Existing Text")
+    |> click(button("Search"))
 
+    assert current_path(session) == product_path(conn, :index)
+    session |> assert_text("Product List")
+    session |> assert_text("No records found")
+  end
 
-    test "search a non existing product", %{conn: conn, session: session} do
+  @tag :drop_products
+  @tag :create_products
+  test "search a existing product", %{conn: conn, session: session} do
+    session
+    |> visit("/")
+    |> click(css("#list_products"))
+    |> fill_in(text_field("Search term"), with: @valid_product_params.sku)
+    |> click(button("Search"))
+    |> find(css(".table"), fn(table) ->
+      table |> assert_has(link(@valid_product_params.sku))
+      table |> assert_text(@valid_product_params.name)
+      table |> assert_text(@valid_product_params.description)
+      table |> assert_text("#{@valid_product_params.quantity}")
+      table |> assert_text("#{@valid_product_params.price}")
+      table |> assert_text(@valid_product_params.ean)
+    end)
 
-      session
-      |> visit("/")
-      |> click(css("#list_products"))
-      |> fill_in(text_field("Search term"), with: "Non Existing Text")
-      |> click(button("Search"))
-
-      assert current_path(session) == product_path(conn, :index)
-      session |> assert_text("Product List")
-      session |> assert_text("No records found")
-    end
-
-    test "search a existing product", %{conn: conn, session: session} do
-      session
-      |> visit("/")
-      |> click(css("#list_products"))
-      |> fill_in(text_field("Search term"), with: @valid_product_params.sku)
-      |> click(button("Search"))
-      |> find(css(".table"), fn(table) ->
-        table |> assert_has(link(@valid_product_params.sku))
-        table |> assert_text(@valid_product_params.name)
-        table |> assert_text(@valid_product_params.description)
-        table |> assert_text("#{@valid_product_params.quantity}")
-        table |> assert_text("#{@valid_product_params.price}")
-        table |> assert_text(@valid_product_params.ean)
-      end)
-
-      assert current_path(session) == product_path conn, :index
-      session |> assert_text("Product List")
-      assert page_source(session) =~ "No records found" == false
-      
-    end
+    assert current_path(session) == product_path conn, :index
+    session |> assert_text("Product List")
+    assert page_source(session) =~ "No records found" == false
   end
 end

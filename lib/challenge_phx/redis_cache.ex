@@ -38,9 +38,9 @@ defmodule ChallengePhx.RedisCache do
   end
 
   defp model_field model do
-    elem(model.__meta__.source, 1)
+    "#{Mix.env}_#{elem(model.__meta__.source, 1)}"
   end
   defp struct_field struct do
-    elem(struct.__struct__.__meta__.source, 1)
+    "#{Mix.env}_#{elem(struct.__struct__.__meta__.source, 1)}"
   end
 end

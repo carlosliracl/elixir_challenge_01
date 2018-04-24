@@ -16,6 +16,7 @@ defmodule ChallengePhxWeb.ConnCase do
   use ExUnit.CaseTemplate
   alias ChallengePhx.Repo
   alias ChallengePhx.Product
+  alias ChallengePhx.ElasticCache
   alias Exredis.Api
   alias Ela
   require IEx
@@ -35,7 +36,6 @@ defmodule ChallengePhxWeb.ConnCase do
 
 
   setup tags do
-    # IEx.pry
     # :ok = Ecto.Adapters.SQL.Sandbox.checkout(ChallengePhx.Repo)
     # unless tags[:async] do
     #   Ecto.Adapters.SQL.Sandbox.mode(ChallengePhx.Repo, {:shared, self()})
@@ -50,19 +50,15 @@ defmodule ChallengePhxWeb.ConnCase do
   end
 
   setup_all do
-    IO.puts "Drop Redis database content"
-
+    IO.puts "Drop redis content"
     Exredis.Api.keys("*")
     |> Enum.each(&(Exredis.Api.del(&1)))
 
     IO.puts "Drop Product collection content"
     Repo.delete_all(Product)
 
-    IO.puts "Drop Product Elastic content"
-    Tirexs.HTTP.delete("/challenge")
+    IO.puts "Drop elastic content"
+    ElasticCache.drop
     {:ok, dummy: :dumb}
   end
-
-  
-
 end

@@ -43,12 +43,12 @@ defmodule ChallengePhxWeb.ProductShowTest do
     session
     |> visit product_path(conn, :show, product.id)
 
-    session |> assert_text "Show product"
-    session |> assert_text @valid_product_params.name
-    session |> assert_text @valid_product_params.description
-    session |> assert_text "#{@valid_product_params.price}"
-    session |> assert_text "#{@valid_product_params.quantity}"
-    session |> assert_text @valid_product_params.ean
+    session |> assert_text("Show product")
+    session |> assert_text(@valid_product_params.name)
+    session |> assert_text(@valid_product_params.description)
+    session |> assert_text("#{@valid_product_params.price}")
+    session |> assert_text("#{@valid_product_params.quantity}")
+    session |> assert_text(@valid_product_params.ean)
 
     assert current_path(session) == product_path(conn, :show, product.id)
   end

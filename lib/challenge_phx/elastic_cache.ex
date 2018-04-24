@@ -4,15 +4,15 @@ defmodule ChallengePhx.ElasticCache do
   require IEx
 
   def store(model) do
-    put("/challenge/#{model_field(model)}/#{model.id}", model.__struct__.to_list model)
+    put("/#{Mix.env}_challenge/#{model_field(model)}/#{model.id}", model.__struct__.to_list model)
   end
 
   def delete(struct, id) do
-    delete("/challenge/#{struct_field(struct)}/#{id}")
+    delete("/#{Mix.env}_challenge/#{struct_field(struct)}/#{id}")
   end
 
   def search(_struct, param \\ "") do
-    query = Tirexs.Search.search [index: "challenge"] do
+    query = Tirexs.Search.search [index: "#{Mix.env}_challenge"] do
       size 200
       query do
         # multi_match  param, ["sku", "name", "description"]
@@ -29,6 +29,10 @@ defmodule ChallengePhx.ElasticCache do
       hits
       |> Enum.map(fn(el) -> el._source  end)
     end
+  end
+
+  def drop do
+    Tirexs.HTTP.delete("/#{Mix.env}_challenge")
   end
 
   defp model_field model do
