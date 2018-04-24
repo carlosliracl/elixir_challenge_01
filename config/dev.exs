@@ -58,8 +58,7 @@ config :phoenix, :stacktrace_depth, 20
 #   pool_size: 10
 
 config :challenge_phx, ChallengePhx.Repo,
-database: "challenge_test",
-# database: "challenge_development",
+database: "challenge_development",
 # username: "mongodb", # remove if unneeded
   # password: "mongosb", # remove if unneeded
   hostname: "localhost"

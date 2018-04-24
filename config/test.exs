@@ -36,5 +36,5 @@ config :exredis,
   reconnect: :no_reconnect,
   max_queue: :infinity
 
-config :hound, driver: "phantomjs"
+# config :hound, driver: "phantomjs"
 config :wallaby, phantomjs: "/opt/apps/phantomjs-2.1.1-linux-x86_64/bin/phantomjs"

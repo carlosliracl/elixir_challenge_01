@@ -1,14 +1,13 @@
 defmodule ChallengePhxWeb.ProductCreateTest do
   use ChallengePhxWeb.ConnCase
-  # Import Hound helpers
-  use Hound.Helpers
+  import Wallaby.Browser
+  import Wallaby.Query
+
   import ChallengePhxWeb.Router.Helpers
   alias ChallengePhx.Repo
   alias ChallengePhx.Product
 
   require IEx
-  # Start a Hound session
-  hound_session()
 
   @valid_product_params %{
     sku: "SKU-2324ASFA",
@@ -24,205 +23,172 @@ defmodule ChallengePhxWeb.ProductCreateTest do
     {:ok, dummy: :dumb}
   end
 
-  test "try to create a valid product", %{conn: conn} do
-    conn = get conn, "/"
-    navigate_to "/"
+  test "try to create a valid product", %{conn: conn, session: session} do
+    session
+    |> visit("/")
+    |> click(css("#list_products"))
+    |> click(css("#add_product"))
+    |> find(css(".product-form"), fn(form) ->
+      form
+      |> fill_in(text_field("Sku"), with:  @valid_product_params.sku)
+      |> fill_in(text_field("Name"), with:  @valid_product_params.name)
+      |> fill_in(text_field("Description"), with: @valid_product_params.description)
+      |> fill_in(text_field("Quantity"), with: @valid_product_params.quantity)
+      |> fill_in(text_field("Price"), with: @valid_product_params.price)
+      |> fill_in(text_field("Ean"), with: @valid_product_params.ean)
+      |> click(button("Submit"))
+    end)
+    |> find(css(".table"), fn(table) ->
+      table |> assert_has(link(@valid_product_params.sku))
+      table |> assert_text(@valid_product_params.name)
+      table |> assert_text(@valid_product_params.description)
+      table |> assert_text("#{@valid_product_params.quantity}")
+      table |> assert_text("#{@valid_product_params.price}")
+      table |> assert_text(@valid_product_params.ean)
+    end)
 
-    link_products_page = find_element :id, "list_products"
-    click link_products_page
-
-    link_add_product = find_element :id, "add_product"
-    click link_add_product
-
-    fill_field find_element(:id, "product_sku"), @valid_product_params.sku
-    fill_field find_element(:id, "product_name"), @valid_product_params.name
-    fill_field find_element(:id, "product_description"), @valid_product_params.description
-    fill_field find_element(:id, "product_quantity"), @valid_product_params.quantity
-    fill_field find_element(:id, "product_price"), @valid_product_params.price
-    fill_field find_element(:id, "product_ean"), @valid_product_params.ean
-
-    click find_element(:id, "product_submit")
-
-    table_element = find_element(:class, "table")
-    find_within_element(table_element, :link_text, @valid_product_params.sku)
-
-    assert current_path() == product_path conn, :index
-    assert page_source() =~ "Product List"
-    assert page_source() =~ "#{@valid_product_params.name} created!"
+    session |> assert_text("#{@valid_product_params.name} created!")
+    session |> assert_text("Product List")
+    assert current_path(session) == product_path conn, :index
   end
 
-  test "try to create a product without params", %{conn: conn} do
-    conn = get conn, "/"
-    navigate_to "/"
+  test "try to create a product without params", %{conn: conn, session: session} do
+    session
+    |> visit("/")
+    |> click(css("#list_products"))
+    |> click(css("#add_product"))
+    |> find(css(".product-form"), fn(form) ->
+      form
+      |> click(button("Submit"))
+    end)
 
-    link_products_page = find_element :id, "list_products"
-    click link_products_page
-
-    link_add_product = find_element :id, "add_product"
-    click link_add_product
-
-    add_product_button = find_element :id, "product_submit"
-    click add_product_button
-
-    assert current_path() == product_path conn, :index #should be :new
-    assert page_source() =~ "Create a product"
-    assert page_source() =~ ":sku, {\"can't be blank\""
-    assert page_source() =~ ":name, {\"can't be blank\""
-    assert page_source() =~ ":description, {\"can't be blank\""
-    assert page_source() =~ ":quantity, {\"can't be blank\""
-    assert page_source() =~ ":price, {\"can't be blank\""
-    assert page_source() =~ ":ean, {\"can't be blank\""
+    assert current_path(session) == product_path conn, :index #should be :new
+    session |> assert_text("Create a product")
+    session |> assert_text(":sku, {\"can't be blank\"")
+    session |> assert_text(":name, {\"can't be blank\"")
+    session |> assert_text(":description, {\"can't be blank\"")
+    session |> assert_text(":quantity, {\"can't be blank\"")
+    session |> assert_text(":price, {\"can't be blank\"")
+    session |> assert_text(":ean, {\"can't be blank\"")
   end
 
-  test "try to create a product with price lower than 0", %{conn: conn} do
-    conn = get conn, "/"
-    navigate_to "/"
-
-    link_products_page = find_element :id, "list_products"
-    click link_products_page
-
-    link_add_product = find_element :id, "add_product"
-    click link_add_product
-
-    fill_field find_element(:id, "product_sku"), @valid_product_params.sku
-    fill_field find_element(:id, "product_name"), @valid_product_params.name
-    fill_field find_element(:id, "product_description"), @valid_product_params.description
-    fill_field find_element(:id, "product_quantity"), @valid_product_params.quantity
-    fill_field find_element(:id, "product_price"), -1
-    fill_field find_element(:id, "product_ean"), @valid_product_params.ean
-
-    click find_element(:id, "product_submit")
-
-    add_product_button = find_element :id, "product_submit"
-    click add_product_button
-
-    assert current_path() == product_path conn, :index #should be :new
-    assert page_source() =~ "Create a product"
-    assert page_source() =~ ":price, {\"must be greater than %{number}\""
+  test "try to create a product with price lower than 0", %{conn: conn, session: session} do
+    session
+    |> visit("/")
+    |> click(css("#list_products"))
+    |> click(css("#add_product"))
+    |> find(css(".product-form"), fn(form) ->
+      form
+      |> fill_in(text_field("Sku"), with:  @valid_product_params.sku)
+      |> fill_in(text_field("Name"), with:  @valid_product_params.name)
+      |> fill_in(text_field("Description"), with: @valid_product_params.description)
+      |> fill_in(text_field("Quantity"), with: @valid_product_params.quantity)
+      |> fill_in(text_field("Price"), with: -1)
+      |> fill_in(text_field("Ean"), with: @valid_product_params.ean)
+      |> click(button("Submit"))
+    end)
+    assert current_path(session) == product_path(conn, :index) #should be :new
+    session |> assert_text("Create a product")
+    session |> assert_text(":price, {\"must be greater than %{number}\"")
   end
 
-  test "try to create a product with small ean", %{conn: conn} do
-    conn = get conn, "/"
-    navigate_to "/"
+  test "try to create a product with small ean", %{conn: conn, session: session} do
+    session
+    |> visit("/")
+    |> click(css("#list_products"))
+    |> click(css("#add_product"))
+    |> find(css(".product-form"), fn(form) ->
+      form
+      |> fill_in(text_field("Sku"), with:  @valid_product_params.sku)
+      |> fill_in(text_field("Name"), with:  @valid_product_params.name)
+      |> fill_in(text_field("Description"), with: @valid_product_params.description)
+      |> fill_in(text_field("Quantity"), with: @valid_product_params.quantity)
+      |> fill_in(text_field("Price"), with: @valid_product_params.price)
+      |> fill_in(text_field("Ean"), with: "1234")
+      |> click(button("Submit"))
+    end)
 
-    link_products_page = find_element :id, "list_products"
-    click link_products_page
-
-    link_add_product = find_element :id, "add_product"
-    click link_add_product
-
-    fill_field find_element(:id, "product_sku"), @valid_product_params.sku
-    fill_field find_element(:id, "product_name"), @valid_product_params.name
-    fill_field find_element(:id, "product_description"), @valid_product_params.description
-    fill_field find_element(:id, "product_quantity"), @valid_product_params.quantity
-    fill_field find_element(:id, "product_price"), @valid_product_params.price
-    fill_field find_element(:id, "product_ean"), "1234"
-
-    click find_element(:id, "product_submit")
-
-    add_product_button = find_element :id, "product_submit"
-    click add_product_button
-
-    assert current_path() == product_path conn, :index #should be :new
-    assert page_source() =~ "Create a product"
-    assert page_source() =~ ":ean, {\"should be at least %{count} character(s)\""
+    assert current_path(session) == product_path conn, :index #should be :new
+    session |> assert_text("Create a product")
+    session |> assert_text(":ean, {\"should be at least %{count} character(s)\"")
   end
 
 
-  test "try to create a product with large ean", %{conn: conn} do
-    conn = get conn, "/"
-    navigate_to "/"
-
-    link_products_page = find_element :id, "list_products"
-    click link_products_page
-
-    link_add_product = find_element :id, "add_product"
-    click link_add_product
-
-    fill_field find_element(:id, "product_sku"), @valid_product_params.sku
-    fill_field find_element(:id, "product_name"), @valid_product_params.name
-    fill_field find_element(:id, "product_description"), @valid_product_params.description
-    fill_field find_element(:id, "product_quantity"), @valid_product_params.quantity
-    fill_field find_element(:id, "product_price"), @valid_product_params.price
-    fill_field find_element(:id, "product_ean"), "12345678901234567"
-
-    click find_element(:id, "product_submit")
-
-    add_product_button = find_element :id, "product_submit"
-    click add_product_button
-
-    assert current_path() == product_path conn, :index #should be :new
-    assert page_source() =~ "Create a product"
-    assert page_source() =~ ":ean, {\"should be at most %{count} character(s)\""
+  test "try to create a product with large ean", %{conn: conn, session: session} do
+   
+     session
+    |> visit("/")
+    |> click(css("#list_products"))
+    |> click(css("#add_product"))
+    |> find(css(".product-form"), fn(form) ->
+      form
+      |> fill_in(text_field("Sku"), with:  @valid_product_params.sku)
+      |> fill_in(text_field("Name"), with:  @valid_product_params.name)
+      |> fill_in(text_field("Description"), with: @valid_product_params.description)
+      |> fill_in(text_field("Quantity"), with: @valid_product_params.quantity)
+      |> fill_in(text_field("Price"), with: @valid_product_params.price)
+      |> fill_in(text_field("Ean"), with: "01234567890123456789")
+      |> click(button("Submit"))
+    end)
+   
+    assert current_path(session) == product_path conn, :index #should be :new
+    session |> assert_text("Create a product")
+    session |> assert_text(":ean, {\"should be at most %{count} character(s)\"")
   end
 
-  test "try to create a product with invalid sku", %{conn: conn} do
-    conn = get conn, "/"
-    navigate_to "/"
+  test "try to create a product with invalid sku", %{conn: conn, session: session} do
+    session
+    |> visit("/")
+    |> click(css("#list_products"))
+    |> click(css("#add_product"))
+    |> find(css(".product-form"), fn(form) ->
+      form
+      |> fill_in(text_field("Sku"), with:  "!@##!@#%%&%%%")
+      |> fill_in(text_field("Name"), with:  @valid_product_params.name)
+      |> fill_in(text_field("Description"), with: @valid_product_params.description)
+      |> fill_in(text_field("Quantity"), with: @valid_product_params.quantity)
+      |> fill_in(text_field("Price"), with: @valid_product_params.price)
+      |> fill_in(text_field("Ean"), with: @valid_product_params.ean)
+      |> click(button("Submit"))
+    end)
 
-    link_products_page = find_element :id, "list_products"
-    click link_products_page
-
-    link_add_product = find_element :id, "add_product"
-    click link_add_product
-
-    fill_field find_element(:id, "product_sku"), "!@#@#$wasdf2AAsdfadf"
-    fill_field find_element(:id, "product_name"), @valid_product_params.name
-    fill_field find_element(:id, "product_description"), @valid_product_params.description
-    fill_field find_element(:id, "product_quantity"), @valid_product_params.quantity
-    fill_field find_element(:id, "product_price"), @valid_product_params.price
-    fill_field find_element(:id, "product_ean"),  @valid_product_params.ean
-
-    click find_element(:id, "product_submit")
-
-    add_product_button = find_element :id, "product_submit"
-    click add_product_button
-
-    assert current_path() == product_path conn, :index #should be :new
-    assert page_source() =~ "Create a product"
-    assert page_source() =~ ":sku, {\"has invalid format\""
+    assert current_path(session) == product_path conn, :index #should be :new
+    session |> assert_text("Create a product")
+    session |> assert_text(":sku, {\"has invalid format\"")
   end
 
 
-  test "try to create a product with a duplicated sku", %{conn: conn} do
-    conn = get conn, "/"
-    navigate_to "/"
+  test "try to create a product with a duplicated sku", %{conn: conn, session: session} do
+    session
+    |> visit("/")
+    |> click(css("#list_products"))
+    |> click(css("#add_product"))
+    |> find(css(".product-form"), fn(form) ->
+      form
+      |> fill_in(text_field("Sku"), with:  @valid_product_params.sku)
+      |> fill_in(text_field("Name"), with:  @valid_product_params.name)
+      |> fill_in(text_field("Description"), with: @valid_product_params.description)
+      |> fill_in(text_field("Quantity"), with: @valid_product_params.quantity)
+      |> fill_in(text_field("Price"), with: @valid_product_params.price)
+      |> fill_in(text_field("Ean"), with: @valid_product_params.ean)
+      |> click(button("Submit"))
+    end)
+    |> visit("/")
+    |> click(css("#list_products"))
+    |> click(css("#add_product"))
+    |> find(css(".product-form"), fn(form) ->
+      form
+      |> fill_in(text_field("Sku"), with:  @valid_product_params.sku)
+      |> fill_in(text_field("Name"), with:  @valid_product_params.name)
+      |> fill_in(text_field("Description"), with: @valid_product_params.description)
+      |> fill_in(text_field("Quantity"), with: @valid_product_params.quantity)
+      |> fill_in(text_field("Price"), with: @valid_product_params.price)
+      |> fill_in(text_field("Ean"), with: @valid_product_params.ean)
+      |> click(button("Submit"))
+    end)
 
-    link_products_page = find_element :id, "list_products"
-    click link_products_page
-
-    link_add_product = find_element :id, "add_product"
-    click link_add_product
-
-    fill_field find_element(:id, "product_sku"), @valid_product_params.sku
-    fill_field find_element(:id, "product_name"), @valid_product_params.name
-    fill_field find_element(:id, "product_description"), @valid_product_params.description
-    fill_field find_element(:id, "product_quantity"), @valid_product_params.quantity
-    fill_field find_element(:id, "product_price"), @valid_product_params.price
-    fill_field find_element(:id, "product_ean"), @valid_product_params.ean
-
-    click find_element(:id, "product_submit")
-
-
-    navigate_to "/"
-
-    link_products_page = find_element :id, "list_products"
-    click link_products_page
-
-    link_add_product = find_element :id, "add_product"
-    click link_add_product
-
-    fill_field find_element(:id, "product_sku"), @valid_product_params.sku
-    fill_field find_element(:id, "product_name"), @valid_product_params.name
-    fill_field find_element(:id, "product_description"), @valid_product_params.description
-    fill_field find_element(:id, "product_quantity"), @valid_product_params.quantity
-    fill_field find_element(:id, "product_price"), @valid_product_params.price
-    fill_field find_element(:id, "product_ean"), @valid_product_params.ean
-
-    click find_element(:id, "product_submit")
-
-    assert current_path() == product_path conn, :index
-    assert page_source() =~ "Create a product"
-    assert page_source() =~ ":sku, {\"has already been taken\""
+    assert current_path(session) == product_path conn, :index #should be :new
+    session |> assert_text("Create a product")
+    session |> assert_text(":sku, {\"has already been taken\"")
   end
 end

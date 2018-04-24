@@ -16,7 +16,8 @@ defmodule ChallengePhxWeb.ConnCase do
   use ExUnit.CaseTemplate
   alias ChallengePhx.Repo
   alias ChallengePhx.Product
-  Exredis.Api
+  alias Exredis.Api
+  alias Ela
   require IEx
 
   using do
@@ -55,8 +56,10 @@ defmodule ChallengePhxWeb.ConnCase do
     |> Enum.each(&(Exredis.Api.del(&1)))
 
     IO.puts "Drop Product collection content"
-
     Repo.delete_all(Product)
+
+    IO.puts "Drop Product Elastic content"
+    Tirexs.HTTP.delete("/challenge")
     {:ok, dummy: :dumb}
   end
 

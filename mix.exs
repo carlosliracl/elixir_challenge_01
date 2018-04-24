@@ -21,7 +21,8 @@ defmodule ChallengePhx.Mixfile do
     [
       mod: {ChallengePhx.Application, []},
       # extra_applications: [:logger, :runtime_tools, :mongodb_ecto, :logstash_json] 
-      extra_applications: app_list(Mix.env) 
+      # extra_applications: app_list(Mix.env) 
+      extra_applications: app_list() 
     ]
   end
 
@@ -29,8 +30,8 @@ defmodule ChallengePhx.Mixfile do
     [:logger, :runtime_tools, :mongodb_ecto, :logstash_json]
   end
   
-  def app_list(:test), do: [:hound | app_list()]
-  def app_list(_),     do: app_list()
+  # def app_list(:test), do: [:hound, app_list()]
+  # def app_list(_),     do: app_list()
   
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
@@ -53,7 +54,6 @@ defmodule ChallengePhx.Mixfile do
       {:exredis, ">= 0.2.4"},
       {:faker, "~> 0.10"},
       {:tirexs, "~> 0.8"},
-      {:hound, "~> 1.0"},
       {:logstash_json, github: "svetob/logstash-json"},
       {:ex_guard, "~> 1.3", only: :dev},
       {:wallaby, "~> 0.19.2", [runtime: false, only: :test]}
