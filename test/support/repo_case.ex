@@ -19,8 +19,6 @@ defmodule ChallengePhxWeb.RepoCase do
   alias ChallengePhx.Product
   alias ChallengePhx.Products
   alias ChallengePhx.ElasticCache
-  alias Exredis.Api
-  alias Ela
   require IEx
 
   setup tags do
@@ -45,7 +43,6 @@ defmodule ChallengePhxWeb.RepoCase do
       {:ok, product_02} = params_for(:product) |> Products.insert
       result = result ++ [products: [product_01, product_02]]
     end
-
     {:ok, result}
   end
 

@@ -19,6 +19,7 @@ defmodule ChallengePhxWeb.Router do
 
     get "/", PageController, :index
     resources "/products", ProductController
+    get "/generate_product_report", ProductReportController, :generate_report
   end
 
   # Other scopes may use custom stacks.

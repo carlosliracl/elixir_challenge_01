@@ -1,4 +1,5 @@
-<%= link "Add product", to: product_path(@conn, :new), class: "btn btn-primary btn-lg mb-1", id: "add_product" %>
+<%= link "Add product", to: product_path(@conn, :new), class: "btn btn-primary mb-1", id: "add_product" %>
+<%= link "Generate report", to: product_report_path(@conn, :generate_report), class: "btn btn-warning mb-1 pull-right", id: "generate_report" %>
 
 <form method="get" action="" class="form-horizontal">
    <div class="form-group">

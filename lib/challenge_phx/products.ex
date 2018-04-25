@@ -4,6 +4,8 @@ defmodule ChallengePhx.Products do
   alias ChallengePhx.ProductCache
   require IEx
 
+  @file_path "/opt/apps/challenge_reports/"
+
   def get(id) do
     case ProductCache.get(id) do cached_product
       when
@@ -59,4 +61,6 @@ defmodule ChallengePhx.Products do
         {:error, changeset}
     end
   end
+
+ 
 end
