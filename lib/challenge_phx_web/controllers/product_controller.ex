@@ -102,10 +102,12 @@ defmodule ChallengePhxWeb.ProductController do
   end
 
 
+  defp search_products(nil), do: search_products("")
+  defp search_products(""), do: Repo.all(Product)
+
   defp search_products(search_param) do
     case search_param == nil do
       # 0 -> Repo.all(Product)
-      true -> Repo.all(Product)
       _ -> ProductCache.search(search_param)
     end
   end

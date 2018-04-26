@@ -69,7 +69,6 @@ defmodule ChallengePhxWeb.ProductCreateTest do
   end
 
   test "try to create a product with price lower than 0", %{conn: conn, session: session} do
-
     product = build(:product)
 
     session
@@ -92,7 +91,6 @@ defmodule ChallengePhxWeb.ProductCreateTest do
   end
 
   test "try to create a product with small ean", %{conn: conn, session: session} do
-
     product = build(:product)
 
     session
@@ -117,9 +115,8 @@ defmodule ChallengePhxWeb.ProductCreateTest do
 
 
   test "try to create a product with large ean", %{conn: conn, session: session} do
-
     product = build(:product)
-    
+
     session
     |> visit("/")
     |> click(css("#list_products"))
@@ -134,14 +131,13 @@ defmodule ChallengePhxWeb.ProductCreateTest do
       |> fill_in(text_field("Ean"), with: "01234567890123456789")
       |> click(button("Submit"))
     end)
-   
+
     assert current_path(session) == product_path conn, :index #should be :new
     session |> assert_text("Create a product")
     session |> assert_text(":ean, {\"should be at most %{count} character(s)\"")
   end
 
   test "try to create a product with invalid sku", %{conn: conn, session: session} do
-
     product = build(:product)
 
     session
@@ -166,7 +162,6 @@ defmodule ChallengePhxWeb.ProductCreateTest do
 
 
   test "try to create a product with a duplicated sku", %{conn: conn, session: session} do
-
     product = build(:product)
 
     session

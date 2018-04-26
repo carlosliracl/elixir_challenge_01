@@ -136,7 +136,7 @@ defmodule ProductTest do
 
   end
 
-  test "validates product with ean having more than 8 characters"  do
+  test "validates product with ean having more than 13 characters"  do
 
     attrs_empty_name = @valid_attrs |> Map.put(:ean, "12345678901234567")
     product = %Product{}
@@ -145,7 +145,7 @@ defmodule ProductTest do
     assert product.valid? == false
 
     assert product.errors[:ean] |> elem(0) == "should be at most %{count} character(s)"
-    
+
     validation = product.errors[:ean] |> elem(1)
     assert validation[:max] == 13
 

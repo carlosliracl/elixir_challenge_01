@@ -11,6 +11,7 @@
 # and so on) as they will fail if something goes wrong.
 for _ <- 1..100 do
   ChallengePhx.Factory.insert(:product)
+  |> ChallengePhx.ProductCache.store
 end
 
 ## feed elasticsearch

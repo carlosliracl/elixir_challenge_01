@@ -63,7 +63,7 @@ defmodule ChallengePhx.Mixfile do
       {:exq, "~> 0.10.1"},
       {:exq_ui, "~> 0.9.0"},
       {:mock, "~> 0.3.0", only: :test},
-      {:httpotion, "~> 3.1.0"},
+      {:httpoison, "~> 1.0", override: true},
     ]
   end
 

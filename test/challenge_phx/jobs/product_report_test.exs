@@ -4,18 +4,19 @@ defmodule ChallengePhx.Job.ProductReportTaskTest do
 
   import ChallengePhx.Factory
 
-  alias ChallengePhx.Jobs.ProductReportTask
+  alias ChallengePhx.Jobs.CreateReport
 
   require IEx
 
   setup context do
     if context[:products] do
-      expected_data = context[:products]
+      report_header = "sku;name;description;price;quantity;ean\n"
+      report_data = context[:products]
         |> Enum.map(&(
-          "#{&1.id};#{&1.sku};#{&1.name};#{&1.description};#{&1.price};#{&1.quantity};#{&1.ean}"
+          "#{&1.sku};#{&1.name};#{&1.description};#{&1.price};#{&1.quantity};#{&1.ean}"
         ))
         |> Enum.join("\n")
-      [expected_data: expected_data]
+      [header: report_header, data: report_data]
     else
       context
     end
@@ -23,22 +24,22 @@ defmodule ChallengePhx.Job.ProductReportTaskTest do
 
   @tag :insert_one_product
   test "the content of a report line", %{product: product} do
-    expected_line = "#{product.id};#{product.sku};#{product.name};#{product.description};#{product.price};#{product.quantity};#{product.ean}"
-    assert expected_line == ProductReportTask.report_line(product)
+    expected_line = "#{product.sku};#{product.name};#{product.description};#{product.price};#{product.quantity};#{product.ean}"
+    assert expected_line == CreateReport.report_line(product)
   end
 
   @tag :drop_products
   @tag :create_products
   test "the report data", context do
-    assert context.expected_data == ProductReportTask.report_data
+    assert context.data == CreateReport.report_data
   end
 
   @tag :drop_products
   @tag :create_products
   test "the report file content", context do
-    {:ok, file_name} = ProductReportTask.build_report
+    {:ok, file_name} = CreateReport.build_report
     assert File.exists? file_name
-    assert {:ok, context.expected_data} == File.read(file_name)
+    assert {:ok, context.header <> context.data} == File.read(file_name)
   end
 
 end

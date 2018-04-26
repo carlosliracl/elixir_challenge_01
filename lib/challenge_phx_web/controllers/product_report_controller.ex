@@ -4,9 +4,15 @@ defmodule ChallengePhxWeb.ProductReportController do
 
   def generate_report(conn, _params) do
 
-    # Supervisor.start_link([ChallengePhx.Jobs.ProductReportTask], [strategy: :one_for_one])
+    response = Task.async(ChallengePhx.Jobs.CreateReport, :perform, [])
+    # |> Task.await()
 
-    {:ok, ack} = Exq.enqueue_in(Exq, "default", 10, "QueueEater.Jobs.ProductReportTask", [])
+    # Supervisor.start_link([ChallengePhx.Jobs.CreateReport], [strategy: :one_for_one])
+
+    # {:ok, encoded} = Poison.encode(%{class:  "ManualQueue.Jobs.CreateReport", args: [], created_at: :os.system_time})
+    # Exredis.Api.sadd("manual:queue", encoded)
+    
+    # {:ok, ack} = Exq.enqueue_in(Exq, "default", 10, "QueueEater.Jobs.ProductReportTask", [])
 
     conn
     |> put_flash(:info, "O relatório será enviado por e-mail assim que estiver pronto")
