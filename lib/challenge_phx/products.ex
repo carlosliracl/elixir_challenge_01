@@ -7,7 +7,7 @@ defmodule ChallengePhx.Products do
   def get(id) do
     case ProductCache.get(id) do cached_product
       when
-        is_map( cached_product) -> cached_product
+        is_map(cached_product) -> cached_product
         :undefined -> load_from_db(id)
     end
   end

@@ -1,6 +1,7 @@
 defmodule ChallengePhx.Jobs.CreateReport do
 
   require IEx
+  require Logger
   import Ecto.Query
   alias ChallengePhx.Repo
   alias ChallengePhx.Product
@@ -12,7 +13,7 @@ defmodule ChallengePhx.Jobs.CreateReport do
       __MODULE__.build_report()
       :ok
     rescue e ->
-      IO.inspect e
+      Logger.error(e)
       :error
     end
   end
@@ -22,10 +23,9 @@ defmodule ChallengePhx.Jobs.CreateReport do
   end
 
   def report_data do
-    Repo.all(Product)
-    |> Enum.map(&(
-      report_line(&1)
-    ))
+    products = Repo.all(Product)
+    products
+    |> Enum.map(&(report_line(&1)))
     |> Enum.join("\n")
   end
 
@@ -42,7 +42,7 @@ defmodule ChallengePhx.Jobs.CreateReport do
   def build_report do
     report_file_name = gen_report_file_name()
     report_content = report_header() <> report_data()
-    case File.write( report_file_name, report_content) do
+    case File.write(report_file_name, report_content) do
       {:error, _} ->
         :error
       :ok ->

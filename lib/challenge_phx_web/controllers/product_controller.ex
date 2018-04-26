@@ -19,7 +19,7 @@ defmodule ChallengePhxWeb.ProductController do
     render(conn, "index.html", products: products, search_param: search_param)
   end
 
-  def show(conn, %{"id" => _id }) do
+  def show(conn, %{"id" => _id}) do
     product = conn.assigns[:product]
     if product != nil do
       conn
@@ -34,7 +34,7 @@ defmodule ChallengePhxWeb.ProductController do
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn,  %{"product" => product_params }) do
+  def create(conn, %{"product" => product_params}) do
 
     case Products.insert product_params do
       {:ok, product} ->
@@ -46,7 +46,7 @@ defmodule ChallengePhxWeb.ProductController do
     end
   end
 
-  def edit(conn, %{"id" => _id }) do
+  def edit(conn, %{"id" => _id}) do
     product = conn.assigns[:product]
     if product != nil do
       changeset = Product.changeset(product)
@@ -56,7 +56,7 @@ defmodule ChallengePhxWeb.ProductController do
     end
   end
 
-  def update(conn, %{"product" => product_params }) do
+  def update(conn, %{"product" => product_params}) do
     product = conn.assigns[:product]
 
     case Products.update product, product_params do
@@ -87,11 +87,11 @@ defmodule ChallengePhxWeb.ProductController do
   end
 
   defp set_product(conn, _attrs) do
-    %{"id" => id } = conn.params
+    %{"id" => id} = conn.params
 
     case Products.get(id) do product
       when
-        is_map( product) ->
+        is_map(product) ->
           assign(conn, :product, product)
 
         :undefined ->

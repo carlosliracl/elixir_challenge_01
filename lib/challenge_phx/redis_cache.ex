@@ -34,7 +34,7 @@ defmodule ChallengePhx.RedisCache do
 
     result
     |> Map.values
-    |> Enum.map(&(Poison.decode!(&1, as: struct.__struct__) ))
+    |> Enum.map(&(Poison.decode!(&1, as: struct.__struct__)))
   end
 
   defp model_field model do

@@ -24,7 +24,7 @@ defmodule ChallengePhx.Product do
     |> validate_required([:sku, :name, :description, :quantity, :price, :ean])
     |> unique_constraint(:sku, name: "sku_1")
     |> validate_format(:sku, ~r/^[A-Za-z0-9-]+$/)
-    |> validate_number(:price, greater_than: 0)
+    # |> validate_number(:price, greater_than: 0)
     |> validate_length(:ean, min: 8, max: 13)
   end
 

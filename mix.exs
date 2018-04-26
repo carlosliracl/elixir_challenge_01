@@ -52,18 +52,22 @@ defmodule ChallengePhx.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:mongodb_ecto, github: "michalmuskala/mongodb_ecto"},
-      {:credo, "~> 0.9.0-rc1", only: [:dev, :test], runtime: false},
+
+      {:credo, "~> 0.9.0-rc1", only: [:dev, :test], runtime: false}, # code style
+
       {:exredis, ">= 0.2.4"},
-      {:faker, "~> 0.10"},
-      {:tirexs, "~> 0.8"},
+      {:tirexs, "~> 0.8"}, # elasticsearch
       {:logstash_json, github: "svetob/logstash-json"},
+      
+      {:faker, "~> 0.10"},
       {:ex_guard, "~> 1.3", only: :dev},
       {:wallaby, "~> 0.20.0", [runtime: false, only: :test]},
       {:ex_machina, "~> 2.2"},
-      {:exq, "~> 0.10.1"},
-      {:exq_ui, "~> 0.9.0"},
+      {:exq, "~> 0.10.1", only: :dev},
+      {:exq_ui, "~> 0.9.0", only: :dev},
       {:mock, "~> 0.3.0", only: :test},
       {:httpoison, "~> 1.0", override: true},
+      {:distillery, "~> 1.5", runtime: false}
     ]
   end
 
