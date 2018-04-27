@@ -16,20 +16,20 @@ defmodule ChallengePhxWeb.RepoCase do
   use ExUnit.CaseTemplate
   import ChallengePhx.Factory
   alias ChallengePhx.Repo
-  alias ChallengePhx.Product
-  alias ChallengePhx.Products
-  alias ChallengePhx.ElasticCache
+  alias ChallengePhx.Models.Product
+  alias ChallengePhx.Models.Products
+  alias ChallengePhx.Cache.Elasticsearch
   require IEx
 
   setup tags do
     result = []
 
     if tags[:drop_products] do
-     drop_contents()
+      drop_contents()
     end
 
     if tags[:insert_one_product] do
-      {:ok, product} = Products.insert params_for(:product)
+      {:ok, product} = Products.insert(params_for(:product))
       result = result ++ [product: product]
     end
 
@@ -39,10 +39,11 @@ defmodule ChallengePhxWeb.RepoCase do
     end
 
     if tags[:create_products] do
-      {:ok, product_01} = params_for(:product) |> Products.insert
-      {:ok, product_02} = params_for(:product) |> Products.insert
+      {:ok, product_01} = params_for(:product) |> Products.insert()
+      {:ok, product_02} = params_for(:product) |> Products.insert()
       result = result ++ [products: [product_01, product_02]]
     end
+
     {:ok, result}
   end
 
@@ -54,12 +55,12 @@ defmodule ChallengePhxWeb.RepoCase do
   defp drop_contents do
     # IO.puts "Drop redis content"
     Exredis.Api.keys("*")
-    |> Enum.each(&(Exredis.Api.del(&1)))
+    |> Enum.each(&Exredis.Api.del(&1))
 
     # IO.puts "Drop Product collection content"
     Repo.delete_all(Product)
 
     # IO.puts "Drop elastic content"
-    ElasticCache.drop
+    Elasticsearch.drop()
   end
 end

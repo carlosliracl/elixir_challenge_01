@@ -12,12 +12,12 @@ defmodule ChallengePhxWeb.ProductShowTest do
     session
     |> visit(product_path(conn, :show, "NONEXISTINGID"))
     |> assert_text("Product NONEXISTINGID not found.")
-    assert current_path(session) == product_path conn, :index
+
+    assert current_path(session) == product_path(conn, :index)
   end
 
   @tag :insert_one_product
   test "to show a existing product", %{conn: conn, product: product, session: session} do
-
     session
     |> visit(product_path(conn, :show, product.id))
 

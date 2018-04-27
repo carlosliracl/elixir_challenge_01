@@ -11,8 +11,7 @@ defmodule ChallengePhxWeb.ProductDeleteTest do
   @tag :drop_products
   @tag :insert_one_product
   test "to delete a existing product", %{conn: conn, product: product, session: session} do
-
-    #HACK: Strange behavior, only works with two attempts
+    # HACK: Strange behavior, only works with two attempts
     session
     |> visit(product_path(conn, :show, product.id))
     |> click(css("#product_delete_button"))

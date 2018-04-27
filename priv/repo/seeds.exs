@@ -11,11 +11,5 @@
 # and so on) as they will fail if something goes wrong.
 for _ <- 1..100 do
   ChallengePhx.Factory.insert(:product)
-  |> ChallengePhx.ProductCache.store
+  |> ChallengePhx.Cache.ProductCache.store
 end
-
-## feed elasticsearch
-# alias ChallengePhx.Repo
-# alias ChallengePhx.Product
-# alias ChallengePhx.ProductCache
-# Repo.all(Product) |> Enum.each(fn(product) -> ProductCache.store product  end)

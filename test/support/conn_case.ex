@@ -15,8 +15,8 @@ defmodule ChallengePhxWeb.ConnCase do
 
   use ExUnit.CaseTemplate
   alias ChallengePhx.Repo
-  alias ChallengePhx.Product
-  alias ChallengePhx.ElasticCache
+  alias ChallengePhx.Models.Product
+  alias ChallengePhx.Cache.Elasticsearch
   alias Exredis.Api
   alias Ela
   require IEx
@@ -27,13 +27,11 @@ defmodule ChallengePhxWeb.ConnCase do
       use Wallaby.DSL
       use Phoenix.ConnTest
       import ChallengePhxWeb.Router.Helpers
-    
 
       # The default endpoint for testing
       @endpoint ChallengePhxWeb.Endpoint
     end
   end
-
 
   setup tags do
     # :ok = Ecto.Adapters.SQL.Sandbox.checkout(ChallengePhx.Repo)
@@ -42,10 +40,10 @@ defmodule ChallengePhxWeb.ConnCase do
     # end
     {:ok, session} = Wallaby.start_session()
     conn = Phoenix.ConnTest.build_conn()
+
     {
-      :ok, 
-      conn: conn,
-      session: session
+      :ok,
+      conn: conn, session: session
     }
   end
 
@@ -58,7 +56,7 @@ defmodule ChallengePhxWeb.ConnCase do
   #   Repo.delete_all(Product)
 
   #   IO.puts "Drop elastic content"
-  #   ElasticCache.drop
+  #   Elasticsearch.drop
   #   {:ok, dummy: :dumb}
   # end
 end

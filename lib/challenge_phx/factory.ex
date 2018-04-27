@@ -3,7 +3,7 @@ defmodule ChallengePhx.Factory do
   use ExMachina.Ecto, repo: ChallengePhx.Repo
 
   def product_factory do
-    %ChallengePhx.Product{
+    %ChallengePhx.Models.Product{
       sku: sequence(:sku, &"SKU-AA-00#{&1}"),
       name: Faker.Commerce.product_name,
       description: Faker.Lorem.paragraph,

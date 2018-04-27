@@ -1,7 +1,7 @@
-defmodule ChallengePhx.Products do
+defmodule ChallengePhx.Models.Products do
   alias ChallengePhx.Repo
-  alias ChallengePhx.Product
-  alias ChallengePhx.ProductCache
+  alias ChallengePhx.Models.Product
+  alias ChallengePhx.Cache.ProductCache
   require IEx
 
   def get(id) do
@@ -59,4 +59,14 @@ defmodule ChallengePhx.Products do
         {:error, changeset}
     end
   end
+
+  def search_products(nil), do: search_products("")
+  def search_products(""), do: Repo.all(Product)
+
+  def search_products(search_param) do
+    case search_param == nil do
+      _ -> ProductCache.search(search_param)
+    end
+  end
+
 end

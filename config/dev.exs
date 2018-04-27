@@ -15,6 +15,7 @@ config :challenge_phx, ChallengePhxWeb.Endpoint,
                     cd: Path.expand("../assets", __DIR__)]]
 
 config :challenge_phx, ChallengePhxWeb.Endpoint,
+  instrumenters: [ExDebugToolbar.Collector.InstrumentationCollector],
   live_reload: [
     patterns: [
       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
@@ -41,7 +42,8 @@ config :phoenix, :stacktrace_depth, 20
 #   pool_size: 10
 
 config :challenge_phx, ChallengePhx.Repo,
-database: "challenge_development",
+  loggers: [ExDebugToolbar.Collector.EctoCollector, Ecto.LogEntry],
+  database: "challenge_development",
 # username: "mongodb", # remove if unneeded
   # password: "mongosb", # remove if unneeded
   hostname: "localhost"
@@ -73,3 +75,13 @@ config :exq_ui,
   web_port: 4040,
   web_namespace: "",
   server: true
+
+config :ex_debug_toolbar,
+  enable: true
+
+
+config :phoenix, :template_engines,
+  eex: ExDebugToolbar.Template.EExEngine,
+  exs: ExDebugToolbar.Template.ExsEngine
+  #slim: ExDebugToolbar.Template.SlimEngine,
+  #slime: ExDebugToolbar.Template.SlimEngine

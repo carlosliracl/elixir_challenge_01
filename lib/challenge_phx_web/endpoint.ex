@@ -1,6 +1,7 @@
 defmodule ChallengePhxWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :challenge_phx
-
+  use ExDebugToolbar.Phoenix
+  
   socket "/socket", ChallengePhxWeb.UserSocket
 
   # Serve at "/" the static files from "priv/static" directory.

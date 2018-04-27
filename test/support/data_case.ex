@@ -26,11 +26,11 @@ defmodule ChallengePhx.DataCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ChallengePhx.Repo)
+    # :ok = Ecto.Adapters.SQL.Sandbox.checkout(ChallengePhx.Repo)
 
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(ChallengePhx.Repo, {:shared, self()})
-    end
+    # unless tags[:async] do
+    #   Ecto.Adapters.SQL.Sandbox.mode(ChallengePhx.Repo, {:shared, self()})
+    # end
 
     :ok
   end
@@ -50,7 +50,4 @@ defmodule ChallengePhx.DataCase do
       end)
     end)
   end
-
-
-  
 end

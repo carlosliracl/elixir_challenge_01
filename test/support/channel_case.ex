@@ -25,13 +25,13 @@ defmodule ChallengePhxWeb.ChannelCase do
     end
   end
 
-
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(ChallengePhx.Repo)
+
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(ChallengePhx.Repo, {:shared, self()})
     end
+
     :ok
   end
-
 end

@@ -3,10 +3,10 @@ defmodule ChallengePhxWeb.ProductController do
 
   import ChallengePhxWeb.Router.Helpers
 
-  alias ChallengePhx.ProductCache
+  alias ChallengePhx.Cache.ProductCache
   alias ChallengePhx.Repo
-  alias ChallengePhx.Product
-  alias ChallengePhx.Products
+  alias ChallengePhx.Models.Product
+  alias ChallengePhx.Models.Products
 
   require Logger
   require IEx
@@ -15,7 +15,7 @@ defmodule ChallengePhxWeb.ProductController do
 
   def index(conn, params) do
     search_param = params |> Map.get("q", nil)
-    products = search_products search_param
+    products = Products.search_products(search_param)
     render(conn, "index.html", products: products, search_param: search_param)
   end
 
@@ -98,17 +98,6 @@ defmodule ChallengePhxWeb.ProductController do
           conn
           |> put_flash(:error, "Product #{id} not found.")
           |> redirect(to: product_path(conn, :index))
-    end
-  end
-
-
-  defp search_products(nil), do: search_products("")
-  defp search_products(""), do: Repo.all(Product)
-
-  defp search_products(search_param) do
-    case search_param == nil do
-      # 0 -> Repo.all(Product)
-      _ -> ProductCache.search(search_param)
     end
   end
 end
