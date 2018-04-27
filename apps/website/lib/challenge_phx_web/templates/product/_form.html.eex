@@ -1,0 +1,67 @@
+<%= if not Enum.empty?(@changeset.errors) and @changeset.action != nil do    %>
+    <div class="alert alert-warning">
+        <ul>
+            <%=  for error <- @changeset.errors do %>
+                <li><%= inspect(error)   %></li>
+            <% end %>
+        </ul>
+    </div>
+<% end %>
+
+<%= form_for @changeset, @action, [class: "form-horizontal product-form", role: "form", method: @method], fn f -> %>
+    <div class="form-group">
+        <div class="control-label col-md-2">
+            <%= label f,  :sku %>
+        </div>
+        <div class="col-md-10">
+            <%= text_input f, :sku, class: "form-control" %>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="control-label col-md-2">
+            <%= label f,  :name %>
+        </div>
+        <div class="col-md-10">
+            <%= text_input f, :name, class: "form-control" %>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="control-label col-md-2">
+            <%= label f, :description %>
+        </div>
+        <div class="col-md-10">
+            <%= text_input f, :description, class: "form-control" %>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="control-label col-md-2">
+            <%= label f, :quantity %>
+        </div>
+        <div class="col-md-10">
+            <%= number_input f, :quantity, class: "form-control" %>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="control-label col-md-2">
+            <%= label f , :price %>
+        </div>
+        <div class="col-md-10">
+            <%= text_input f, :price, class: "form-control" %>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="control-label col-md-2">
+            <%= label f , :ean %>
+        </div>
+        <div class="col-md-10">
+            <%= text_input f, :ean, class: "form-control" %>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-1 col-md-10">
+            <%= submit "Submit", class: "btn btn-primary btn-lg pull-right", id: "product_submit" %>
+        </div>
+    </div>
+    
+<% end %>

@@ -1,0 +1,20 @@
+<tr>
+    <td>
+        <%=link @product.sku, to: product_path(@conn, :show, @product), class: "product_#{@product.id}"  %>
+    </td>
+    <td>
+        <%= @product.name %>
+    </td>
+    <td>
+        <%= @product.description %>
+    </td>
+    <td>
+        <%= @product.quantity %>
+    </td>
+    <td>
+        <%= @product.price %>
+    </td>
+    <td>
+        <%= @product.ean %>
+    </td>
+</tr>
