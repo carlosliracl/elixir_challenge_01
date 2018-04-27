@@ -1,2 +1,0 @@
-<h2>Create a product</h2>
-<%= render "_form.html", changeset: @changeset, conn: @conn, action: product_path(@conn, :create), method: :post %>

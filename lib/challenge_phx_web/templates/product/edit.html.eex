@@ -1,3 +1,0 @@
-<h2>Edit product</h2>
-
-<%= render "_form.html", changeset: @changeset, conn: @conn, action: product_path(@conn, :update, @changeset.data), method: :put %>
